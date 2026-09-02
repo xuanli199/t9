@@ -1,0 +1,229 @@
+# Rime schema
+# encoding: utf-8
+#
+# ============================================================
+# 九键(T9)拼音输入方案 —— 位置对应版(基于 weasel 开发)
+# ============================================================
+#
+# 本方案按【数字小键盘的物理位置】对应手机九键:
+#
+#   小键盘布局:          对应手机九键功能:
+#     7 8 9                1(标点) 2(abc) 3(def)
+#     4 5 6                4(ghi)  5(jkl) 6(mno)
+#     1 2 3                7(pqrs) 8(tuv) 9(wxyz)
+#       0                  0(空格)
+#
+# 即: 小键盘 7=标点, 8=abc, 9=def, 4=ghi, 5=jkl, 6=mno,
+#     1=pqrs, 2=tuv, 3=wxyz, 0=空格。
+#
+# 词典编码与手机版九键方案(t9)完全相同, 两个方案共用同一词典,
+# 仅按键映射不同, 可随习惯任意切换(Ctrl+Shift+1 轮换方案)。
+#
+# 默认按键:
+#   - 九键编码输入: 仅数字小键盘 0~9 (需开启 NumLock, 按上述位置对应)
+#     以及用户在"九键按键设置"中自定义的按键;
+#     主键盘横排数字键 1~9 不再触发九键输入
+#   - 主键盘横排数字键 1~5: 候选窗出现时快捷选字
+#     (按 1~5 直接上屏第 1~5 个候选), 与常见输入法一致
+#   - 空格: 上屏首选候选词
+#   - 减号(-)/等号(=)、小键盘减/加: 翻页
+#   - BackSpace: 删除编码
+#   - Control+Shift+2: 切换中英文模式
+#   - 小键盘回车: 上屏原始编码
+#
+# 自定义按键:
+#   推荐用托盘菜单"九键按键设置"图形界面完成。
+#   也可在【用户文件夹】(%APPDATA%\Rime)新建 t9_pos.custom.yaml,
+#   通过 patch 修改 key_binder/bindings 即可。示例参见随包的
+#   t9_pos.custom.yaml 模板。
+# ============================================================
+
+schema:
+  schema_id: t9_pos
+  name: "九键拼音·位置对应"
+  version: "1.0.0"
+  author:
+    - Weasel T9 Developers
+  description: |
+    九键(T9)拼音输入方案, 位置对应版。
+    数字小键盘按物理位置对应手机九键:
+    小键盘 789/456/123 对应手机 123/456/789。
+    主键盘数字键选候选。按键映射可在 t9_pos.custom.yaml 中自定义。
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ 中文, 西文 ]
+    abbrev: [ 中, Ａ ]
+  - name: full_shape
+    states: [ 半角, 全角 ]
+  - options:
+      - zh_hans
+      - zh_hant
+    reset: 0  # 默认输出简化字
+    states:
+      - 简化字
+      - 傳統漢字
+    abbrev: [ 简, 繁 ]
+  - name: ascii_punct
+    states: [ 。，, ．， ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - selector
+    - punctuator
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator@custom_phrase
+    - script_translator
+  filters:
+    - simplifier@zh_variant
+    - uniquifier
+
+speller:
+  alphabet: '23456789'
+  initials: '23456789'
+  delimiter: "'"
+  # 棱镜编译时把拼音音节映射为九键数字编码,
+  # 词典本体保留拼音, 从而预览栏可以显示拼音。
+  algebra:
+    - xlit/ü/8/
+    - xlit/abcdefghijklmnopqrstuvwxyz/22233344455566677778889999/
+
+translator:
+  dictionary: t9
+  prism: t9
+  enable_completion: true
+  enable_sentence: true
+  enable_user_dict: true
+  enable_encoder: false
+  preedit_format: []
+  # 预览栏显示拼音而非数字编码 (librime 定制选项)
+  preedit_uses_spelling: true
+
+custom_phrase:
+  dictionary: ""
+  user_dict: custom_phrase
+  db_class: stabledb
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: 1
+
+punctuator:
+  half_shape:
+    '1': { commit: ， }
+    '0': { commit: ' ' }
+    '.': { commit: 。 }
+  full_shape:
+    '1': { commit: ， }
+    '0': { commit: '　' }
+    '.': { commit: 。 }
+
+key_binder:
+  bindings:
+    # ---- 主键盘横排数字键: 快捷选字 ----
+    # 候选窗出现时, 1~5 直接选第 1~5 个候选 (经 alternative_select_keys
+    # 由 selector 完成选择); 其余状态吞掉按键, 不触发九键输入
+    - {accept: 1, send: exclam, when: has_menu}
+    - {accept: 1, send: 1, when: composing}
+    - {accept: 1, send: F20, when: always}
+    - {accept: 2, send: at, when: has_menu}
+    - {accept: 2, send: 2, when: composing}
+    - {accept: 2, send: F20, when: always}
+    - {accept: 3, send: numbersign, when: has_menu}
+    - {accept: 3, send: 3, when: composing}
+    - {accept: 3, send: F20, when: always}
+    - {accept: 4, send: dollar, when: has_menu}
+    - {accept: 4, send: 4, when: composing}
+    - {accept: 4, send: F20, when: always}
+    - {accept: 5, send: percent, when: has_menu}
+    - {accept: 5, send: 5, when: composing}
+    - {accept: 5, send: F20, when: always}
+    # 6~9 超出每页候选数(5), 各状态下均吞掉, 防止触发九键输入
+    - {accept: 6, send: 6, when: composing}
+    - {accept: 6, send: F20, when: always}
+    - {accept: 7, send: 7, when: composing}
+    - {accept: 7, send: F20, when: always}
+    - {accept: 8, send: 8, when: composing}
+    - {accept: 8, send: F20, when: always}
+    - {accept: 9, send: 9, when: composing}
+    - {accept: 9, send: F20, when: always}
+    # ---- emacs 风格编辑键 ----
+    - { when: composing, accept: Control+p, send: Up }
+    - { when: composing, accept: Control+n, send: Down }
+    - { when: composing, accept: Control+b, send: Left }
+    - { when: composing, accept: Control+f, send: Right }
+    - { when: composing, accept: Control+a, send: Home }
+    - { when: composing, accept: Control+e, send: End }
+    - { when: composing, accept: Control+d, send: Delete }
+    - { when: composing, accept: Control+k, send: Shift+Delete }
+    - { when: composing, accept: Control+h, send: BackSpace }
+    - { when: composing, accept: Control+g, send: Escape }
+    # ---- 翻页 ----
+    - { when: has_menu, accept: minus, send: Page_Up }
+    - { when: has_menu, accept: equal, send: Page_Down }
+    - { when: paging, accept: comma, send: Page_Up }
+    - { when: has_menu, accept: period, send: Page_Down }
+    # ---- 模式切换 ----
+    - { when: always, accept: Control+Shift+1, select: .next }
+    - { when: always, accept: Control+Shift+2, toggle: ascii_mode }
+    - { when: always, accept: Control+Shift+3, toggle: full_shape }
+    - { when: always, accept: Control+Shift+4, toggle: zh_hans }
+    - { when: always, accept: Shift+space, toggle: full_shape }
+    - { when: always, accept: Control+period, toggle: ascii_punct }
+    # ---- 数字小键盘按【位置】映射为手机九键编码 ----
+    # 小键盘第一行 7 8 9 -> 手机第一行 1(标点) 2(abc) 3(def)
+    - {accept: KP_7, send: 1, when: always}
+    - {accept: KP_8, send: 2, when: always}
+    - {accept: KP_9, send: 3, when: always}
+    # 小键盘第二行 4 5 6 -> 手机第二行 4(ghi) 5(jkl) 6(mno)
+    - {accept: KP_4, send: 4, when: always}
+    - {accept: KP_5, send: 5, when: always}
+    - {accept: KP_6, send: 6, when: always}
+    # 小键盘第三行 1 2 3 -> 手机第三行 7(pqrs) 8(tuv) 9(wxyz)
+    - {accept: KP_1, send: 7, when: always}
+    - {accept: KP_2, send: 8, when: always}
+    - {accept: KP_3, send: 9, when: always}
+    - {accept: KP_0, send: 0, when: always}
+    # ---- 小键盘其余按键 ----
+    - {accept: KP_Subtract, send: minus, when: always}
+    - {accept: KP_Add, send: equal, when: always}
+    - {accept: KP_Decimal, send: period, when: always}
+    - {accept: KP_Divide, send: slash, when: always}
+    - {accept: KP_Enter, send: Return, when: composing}
+
+recognizer:
+  import_preset: default
+  patterns:
+    punct: '^/([0-9]0?|[A-Za-z]+)$'
+
+zh_variant:
+  option_name: zh_hans
+  opencc_config: t2s.json
+  tips: none
+  tags: [ abc ]
+  excluded_types: [ punct ]
+
+menu:
+  page_size: 5
+  # 主键盘数字键选候选的映射: 第 1~5 个符号对应第 1~5 个候选。
+  # 设置后裸数字键到达 selector 时不再触发选字,
+  # 保证小键盘/自定义键发送的数字始终用于九键编码输入。
+  # (若 patch 加大 page_size, 需同步补足本映射, 每候选一个符号)
+  alternative_select_keys: '!@#$%'
+
+__patch:
+  # 用家自选配置: 用户文件夹中的 t9_pos.custom.yaml
+  - t9_pos.custom:/patch?

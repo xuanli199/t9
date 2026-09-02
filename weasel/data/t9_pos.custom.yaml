@@ -1,0 +1,40 @@
+# Rime custom settings
+# encoding: utf-8
+#
+# ============================================================
+# 九键位置对应(t9_pos)方案 —— 用户自定义配置模板
+# ============================================================
+# 本文件随程序安装在共享数据目录, 作为自定义示例模板。
+# 自定义按键推荐直接用托盘菜单"九键按键设置"图形界面完成。
+# 要手工修改, 请复制本文件到【用户文件夹】再编辑:
+#   小狼毫用户文件夹: %APPDATA%\Rime  (资源管理器地址栏输入 %APPDATA%\Rime)
+# 修改保存后, 在托盘"中"字图标上右键选择"重新部署"生效。
+#
+# patch 语法速查:
+#   key_binder/bindings/+        在绑定列表末尾追加
+#   send: 2                       发送九键编码 2 (abc 组)
+#   when: always                  任何状态都生效
+#   when: composing               仅在输入编码时生效
+#
+# 本方案默认的位置映射(小键盘 -> 手机九键):
+#   KP_7->1(标点)  KP_8->2(abc)  KP_9->3(def)
+#   KP_4->4(ghi)   KP_5->5(jkl)  KP_6->6(mno)
+#   KP_1->7(pqrs)  KP_2->8(tuv)  KP_3->9(wxyz)
+#   KP_0->0(空格)
+#
+# ---- 示例: 改回与手机数字一致(等同 t9 方案效果) ----
+# patch:
+#   key_binder/bindings/+:
+#     - {accept: KP_7, send: 7, when: always}
+#     - {accept: KP_8, send: 8, when: always}
+#     - {accept: KP_9, send: 9, when: always}
+#     - {accept: KP_1, send: 1, when: always}
+#     - {accept: KP_2, send: 2, when: always}
+#     - {accept: KP_3, send: 3, when: always}
+#
+# ---- 示例: 候选窗每页显示 7 个 ----
+# patch:
+#   menu/page_size: 7
+# ============================================================
+
+patch: {}

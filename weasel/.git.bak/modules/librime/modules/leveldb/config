@@ -1,0 +1,19 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	worktree = ../../../../../librime/deps/leveldb
+[remote "origin"]
+	url = https://github.com/google/leveldb.git
+	fetch = +refs/heads/main:refs/remotes/origin/main
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[submodule "third_party/benchmark"]
+	active = true
+	url = https://github.com/google/benchmark
+[submodule "third_party/googletest"]
+	active = true
+	url = https://github.com/google/googletest.git

@@ -1,0 +1,45 @@
+# Rime custom settings
+# encoding: utf-8
+#
+# ============================================================
+# 九键(t9)方案 —— 用户自定义配置模板
+# ============================================================
+# 本文件随程序安装在共享数据目录, 作为自定义示例模板。
+# 自定义按键推荐直接用托盘菜单"九键按键设置"图形界面完成。
+# 要手工修改, 请复制本文件到【用户文件夹】再编辑:
+#   小狼毫用户文件夹: %APPDATA%\Rime  (资源管理器地址栏输入 %APPDATA%\Rime)
+# 修改保存后, 在托盘"中"字图标上右键选择"重新部署"生效。
+#
+# patch 语法速查:
+#   key_binder/bindings/+        在绑定列表末尾追加
+#   send: 2                       模拟按下主键盘数字键 2 (即九键编码)
+#   send: Page_Down               模拟功能键(翻页/选择等)
+#   when: always                  任何状态都生效
+#   when: composing               仅在输入编码时生效
+#   when: has_menu                仅在候选窗出现时生效
+#
+# ---- 示例 1: 没有数字小键盘的笔记本, 用字母键模拟九键 ----
+# 布局示意:  q w e / a s d / z x c  =>  7 8 9 / 4 5 6 / 1 2 3
+#
+# patch:
+#   key_binder/bindings/+:
+#     - {accept: q, send: 7, when: composing}
+#     - {accept: w, send: 8, when: composing}
+#     - {accept: e, send: 9, when: composing}
+#     - {accept: a, send: 4, when: composing}
+#     - {accept: s, send: 5, when: composing}
+#     - {accept: d, send: 6, when: composing}
+#     - {accept: z, send: 1, when: composing}
+#     - {accept: x, send: 2, when: composing}
+#     - {accept: c, send: 3, when: composing}
+#
+# ---- 示例 2: 每页显示 9 个候选 ----
+# patch:
+#   menu/page_size: 9
+#
+# ---- 示例 3: 默认输出传统汉字(繁体) ----
+# patch:
+#   switches/@2/reset: 1
+# ============================================================
+
+patch: {}
