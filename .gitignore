@@ -38,3 +38,8 @@ desktop.ini
 .vscode/
 *.user
 *.suo
+
+# 本地 git 历史备份, 不上传
+.git.bak/
+.git.bak_file
+.gitmodules.bak

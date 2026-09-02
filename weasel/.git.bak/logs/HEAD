@@ -1,3 +1,0 @@
-0000000000000000000000000000000000000000 f9203cae5e2b0796d94575b975f62a6be9614b00 xuanli <xuanli199@qq.com> 1785864133 +0800	clone: from https://github.com/rime/weasel.git
-f9203cae5e2b0796d94575b975f62a6be9614b00 3944e1d88248cd5262c6a4b2e4f2314a04383873 xuanli <xuanli199@qq.com> 1786379427 +0800	commit: feat(t9): add T9 nine-key input method - t9/t9_pos schemas, dict generator, key settings dialog, tray menu entry, build pipeline
-3944e1d88248cd5262c6a4b2e4f2314a04383873 15217bac21400fdd43cb7afdfebd20475b793831 xuanli <xuanli199@qq.com> 1786987227 +0800	commit: feat(t9): 主键盘数字键改为快捷选字, 九键输入仅小键盘数字与自定义按键
